@@ -46,7 +46,7 @@ export function CalendarPage() {
         <div className="flex items-center gap-3">
           <div className="flex bg-[var(--bg-surface)] rounded-xl p-1 border border-[var(--border)]">
             {['month', 'week', 'day'].map((v) => (
-              <button key={v} onClick={() => toast.info(`Switched to ${v} view`)}
+              <button key={v} onClick={() => toast.success(`Switched to ${v} view`)}
                 className={cn('px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all',
                   view === v ? 'accent-light-bg accent-text' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]')}>{v}</button>
             ))}

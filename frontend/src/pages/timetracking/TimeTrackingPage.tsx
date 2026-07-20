@@ -43,7 +43,7 @@ export function TimeTrackingPage() {
 
   const pauseTimer = () => {
     setIsRunning(false)
-    toast.info('Timer paused')
+    toast.success('Timer paused')
   }
 
   const weeklyEntries = [
