@@ -6,7 +6,8 @@ export interface AuthRequest extends Request {
 }
 
 export function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
-  const token = req.headers.authorization?.replace('Bearer ', '')
+  const authHeader = (req.headers as Record<string, string>)['authorization']
+  const token = authHeader?.replace('Bearer ', '')
   if (!token) {
     return res.status(401).json({ message: 'Authentication required' })
   }
