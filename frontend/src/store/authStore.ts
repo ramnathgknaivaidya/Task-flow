@@ -34,9 +34,7 @@ interface AuthState {
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (name: string, email: string, password: string) => Promise<{ emailSent: boolean }>
-  verifyOTP: (email: string, otp: string) => Promise<void>
-  resendOTP: (email: string) => Promise<void>
+  register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
   setUser: (user: User) => void
 }
@@ -52,10 +50,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       const u = data.user
       set({
         user: { ...mockUser, id: u.id, email: u.email, name: u.name, role: u.role },
-        isAuthenticated: u.emailVerified,
+        isAuthenticated: true,
         isLoading: false,
       })
-      if (!u.emailVerified) throw new Error('Please verify your email first')
     } catch (err: any) {
       set({ isLoading: false })
       throw err
@@ -65,25 +62,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true })
     try {
       const data = await apiPost('/auth/register', { name, email, password })
-      set({ isLoading: false })
-      return { emailSent: data.emailSent }
+      const u = data.user
+      set({
+        user: { ...mockUser, id: u.id, email: u.email, name: u.name, role: u.role },
+        isAuthenticated: true,
+        isLoading: false,
+      })
     } catch (err: any) {
       set({ isLoading: false })
       throw err
     }
-  },
-  verifyOTP: async (email, otp) => {
-    set({ isLoading: true })
-    try {
-      await apiPost('/auth/verify-otp', { email, otp })
-      set({ user: { ...mockUser, email }, isAuthenticated: true, isLoading: false })
-    } catch (err: any) {
-      set({ isLoading: false })
-      throw err
-    }
-  },
-  resendOTP: async (email) => {
-    await apiPost('/auth/resend-otp', { email })
   },
   logout: () => {
     set({ user: null, isAuthenticated: false })

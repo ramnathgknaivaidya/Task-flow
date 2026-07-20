@@ -1,15 +1,15 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { Button, Input } from '../../components/ui'
-import { CheckSquare, Eye, EyeOff, Loader2, ArrowLeft, Mail } from 'lucide-react'
+import { CheckSquare, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-type AuthView = 'login' | 'register' | 'verify'
+type AuthView = 'login' | 'register'
 
 export function LoginPage() {
   const navigate = useNavigate()
-  const { login, register, verifyOTP, resendOTP, isLoading } = useAuthStore()
+  const { login, register, isLoading } = useAuthStore()
   const [view, setView] = useState<AuthView>('login')
   const [regName, setRegName] = useState('')
   const [regEmail, setRegEmail] = useState('')
@@ -19,8 +19,6 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showRegPassword, setShowRegPassword] = useState(false)
   const [remember, setRemember] = useState(false)
-  const [otp, setOtp] = useState(['', '', '', '', '', ''])
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,49 +37,12 @@ export function LoginPage() {
       return
     }
     try {
-      const result = await register(regName, regEmail, regPassword)
-      setView('verify')
-      toast.success(result.emailSent ? 'OTP sent to your email' : 'Account created. Check Render logs for OTP.')
-    } catch (err: any) {
-      toast.error(err.message)
-    }
-  }
-
-  const handleVerifyOTP = async () => {
-    const code = otp.join('')
-    if (code.length !== 6) {
-      toast.error('Enter the complete 6-digit OTP')
-      return
-    }
-    try {
-      await verifyOTP(regEmail, code)
-      toast.success('Email verified! Welcome to TaskFlow')
+      await register(regName, regEmail, regPassword)
+      toast.success('Account created! Welcome to TaskFlow')
       navigate('/')
     } catch (err: any) {
       toast.error(err.message)
     }
-  }
-
-  const handleResend = async () => {
-    try {
-      await resendOTP(regEmail)
-      toast.success('OTP resent')
-    } catch (err: any) {
-      toast.error(err.message)
-    }
-  }
-
-  const handleOtpChange = (i: number, val: string) => {
-    if (!/^\d?$/.test(val)) return
-    const next = [...otp]
-    next[i] = val
-    setOtp(next)
-    if (val && i < 5) inputRefs.current[i + 1]?.focus()
-  }
-
-  const handleOtpKeyDown = (i: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !otp[i] && i > 0) inputRefs.current[i - 1]?.focus()
-    if (e.key === 'Enter') handleVerifyOTP()
   }
 
   return (
@@ -186,40 +147,6 @@ export function LoginPage() {
               <p className="text-center text-sm text-[var(--text-muted)] mt-6">
                 Already have an account?{' '}
                 <button type="button" onClick={() => setView('login')} className="text-purple-400 hover:text-purple-300 font-medium">Sign in</button>
-              </p>
-            </>
-          )}
-
-          {view === 'verify' && (
-            <>
-              <div className="flex items-center gap-3 mb-1">
-                <button type="button" onClick={() => setView('register')} className="p-1 -ml-1 text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-                  <ArrowLeft size={18} />
-                </button>
-                <h2 className="text-2xl font-bold text-[var(--text-primary)]">Verify email</h2>
-              </div>
-              <p className="text-sm text-[var(--text-muted)] mb-2">
-                Enter the 6-digit code sent to
-              </p>
-              <p className="text-sm font-medium text-[var(--text-primary)] mb-8 flex items-center gap-2">
-                <Mail size={14} className="text-purple-400" /> {regEmail}
-              </p>
-
-              <div className="flex gap-2 justify-center mb-8">
-                {otp.map((digit, i) => (
-                  <input key={i} ref={(el) => { inputRefs.current[i] = el }} type="text" inputMode="numeric" maxLength={1} value={digit}
-                    onChange={(e) => handleOtpChange(i, e.target.value)} onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                    className="w-11 h-12 text-center text-lg font-bold bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl text-[var(--text-primary)] focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all" />
-                ))}
-              </div>
-
-              <Button className="w-full" loading={isLoading} onClick={handleVerifyOTP}>
-                {isLoading ? 'Verifying...' : 'Verify email'}
-              </Button>
-
-              <p className="text-center text-sm text-[var(--text-muted)] mt-6">
-                Didn't receive the code?{' '}
-                <button type="button" onClick={handleResend} className="text-purple-400 hover:text-purple-300 font-medium">Resend</button>
               </p>
             </>
           )}

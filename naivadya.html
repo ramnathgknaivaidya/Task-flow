@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naivadya — Unified Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent: #9d4edd;
+  --accent-hover: #7b2cbf;
+  --accent-light: rgba(157,78,221,0.12);
+  --accent-glow: rgba(157,78,221,0.3);
+  --bg-base: #0a0a0f;
+  --bg-surface: #12121a;
+  --bg-card: #1a1a26;
+  --bg-hover: #222233;
+  --text-primary: #f1f1f7;
+  --text-secondary: #a0a0b8;
+  --text-muted: #6a6a80;
+  --border: #2a2a3e;
+  --border-hover: #3a3a55;
+  --success: #22c55e;
+  --warning: #eab308;
+  --danger: #ef4444;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+::selection { background: var(--accent); color: #fff; }
+svg { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,15,0.85); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; text-decoration: none; color: var(--text-primary); }
+.nav-logo .n { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 16px; }
+.nav-links { display: flex; align-items: center; gap: 24px; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: color .2s; }
+.nav-links a:hover { color: var(--text-primary); }
+
+.hero {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 100px 24px 80px; position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(157,78,221,0.15), transparent 60%),
+              radial-gradient(ellipse at 80% 50%, rgba(123,44,191,0.08), transparent 50%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; max-width: 800px; text-align: center; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-light); border: 1px solid var(--accent); border-radius: 100px;
+  padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--accent);
+  margin-bottom: 24px;
+}
+.hero h1 { font-size: clamp(40px,6vw,72px); font-weight: 800; line-height: 1.1; margin-bottom: 16px; letter-spacing: -2px; }
+.hero h1 span { background: linear-gradient(135deg, var(--accent), #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 32px; }
+.hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 12px; font-size: 15px; font-weight: 600;
+  text-decoration: none; transition: all .25s; cursor: pointer; border: none;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
+.btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--bg-hover); border-color: var(--accent); }
+
+.stats-bar {
+  display: flex; flex-wrap: nowrap; gap: 4px; justify-content: center;
+  margin-top: 40px; padding: 16px 20px;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px;
+  max-width: 100%; width: fit-content; margin-left: auto; margin-right: auto;
+}
+.stat-item { display: inline-flex; align-items: center; gap: 10px; padding: 8px 18px; border-radius: 10px; font-size: 14px; white-space: nowrap; }
+.stat-item.bg-accent { background: var(--accent-light); }
+.stat-value { font-weight: 700; color: var(--text-primary); }
+.stat-label { color: var(--text-muted); }
+.avatar-stack { display: inline-flex; }
+.avatar-stack span { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--bg-surface); margin-left: -6px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; background: var(--accent); color: #fff; }
+.avatar-stack span:first-child { margin-left: 0; }
+.avatar-stack span:nth-child(2) { background: #7b2cbf; }
+.avatar-stack span:nth-child(3) { background: #c77dff; }
+
+section { padding: 80px 24px; }
+.section-title { text-align: center; margin-bottom: 48px; }
+.section-title h2 { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+.section-title p { color: var(--text-secondary); font-size: 16px; max-width: 500px; margin: 0 auto; }
+.container { max-width: 1200px; margin: 0 auto; }
+
+.platform-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.platform-card {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 20px;
+  padding: 32px; transition: all .3s; position: relative; overflow: hidden;
+}
+.platform-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+.platform-card .icon-wrap { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.icon-task { background: var(--accent-light); }
+.icon-expense { background: rgba(34,197,94,0.12); }
+.icon-task svg { color: var(--accent); }
+.icon-expense svg { color: var(--success); }
+.platform-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.platform-card p { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; line-height: 1.7; }
+.feature-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+.feature-tags span {
+  background: var(--bg-hover); border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 6px; font-size: 11px; color: var(--text-muted);
+}
+.platform-card .open-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--accent); font-size: 14px; font-weight: 600; text-decoration: none;
+}
+.platform-card .open-btn:hover { gap: 10px; }
+
+.dashboard-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px;
+}
+.dash-card {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px; text-align: center;
+}
+.dash-card .label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+.dash-card .value { font-size: 24px; font-weight: 700; }
+.dash-card .value.green { color: var(--success); }
+.dash-card .value.red { color: var(--danger); }
+.dash-card .value.gold { color: var(--warning); }
+.dash-bottom { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; }
+.dash-panel {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+}
+.dash-panel h4 { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .5px; display: flex; align-items: center; gap: 6px; }
+.dash-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; align-items: center; }
+.dash-row:last-child { border: 0; }
+.quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.quick-actions button {
+  background: var(--bg-hover); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px; font-size: 12px; color: var(--text-secondary); cursor: pointer;
+  transition: all .2s; text-align: center;
+}
+.quick-actions button:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+.analytics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 24px; }
+.analytics-card {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px; text-align: center;
+}
+.analytics-card .num { font-size: 28px; font-weight: 700; }
+.analytics-card .lbl { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.chart-bar { display: flex; gap: 6px; align-items: flex-end; height: 48px; margin-top: 12px; justify-content: center; }
+.chart-bar div { width: 20px; border-radius: 4px 4px 0 0; }
+.exp-breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.exp-bar { height: 4px; border-radius: 4px; margin-top: 2px; width: 100%; background: var(--bg-hover); overflow: hidden; }
+.exp-bar div { height: 100%; border-radius: 4px; }
+
+.features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.feature-card {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 28px; text-align: center; transition: all .3s;
+}
+.feature-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+.feature-card .icon-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+.feature-card .icon-wrap svg { color: var(--accent); }
+.feature-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.feature-card p { font-size: 13px; color: var(--text-secondary); }
+
+.testimonials { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.testimonial-card {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 28px; transition: all .3s;
+}
+.testimonial-card:hover { border-color: var(--accent); }
+.testimonial-card .stars { display: flex; gap: 2px; margin-bottom: 12px; }
+.testimonial-card .stars svg { color: #eab308; }
+.testimonial-card .text { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.7; font-style: italic; }
+.testimonial-card .author { display: flex; align-items: center; gap: 12px; }
+.testimonial-card .author .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; color: #fff; }
+.testimonial-card .author .name { font-size: 14px; font-weight: 600; }
+.testimonial-card .author .role { font-size: 12px; color: var(--text-muted); }
+
+footer {
+  border-top: 1px solid var(--border); padding: 48px 24px 32px;
+}
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 32px; max-width: 1200px; margin: 0 auto; }
+.footer-brand .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; margin-bottom: 12px; }
+.footer-brand .logo .n { width: 28px; height: 28px; border-radius: 6px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; }
+.footer-brand p { font-size: 13px; color: var(--text-muted); max-width: 240px; }
+.footer-col h5 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: .5px; }
+.footer-col a { display: block; font-size: 13px; color: var(--text-muted); text-decoration: none; margin-bottom: 10px; transition: color .2s; }
+.footer-col a:hover { color: var(--accent); }
+.footer-bottom { text-align: center; font-size: 12px; color: var(--text-muted); padding-top: 32px; margin-top: 32px; border-top: 1px solid var(--border); max-width: 1200px; margin-left: auto; margin-right: auto; }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .platform-grid { grid-template-columns: 1fr; }
+  .dashboard-grid { grid-template-columns: repeat(2,1fr); }
+  .dash-bottom { grid-template-columns: 1fr; }
+  .analytics-grid { grid-template-columns: repeat(2,1fr); }
+  .features-grid { grid-template-columns: 1fr; }
+  .testimonials { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .stats-bar { flex-wrap: wrap; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="n">N</span> NAIVADYA
+  </a>
+  <div class="nav-links">
+    <a href="#">About</a>
+    <a href="#">Features</a>
+    <a href="#">Docs</a>
+    <a href="#">Support</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5.5L19 5l-2.5 5.5L22 12l-5.5 1.5L19 19l-5.5-2.5L12 22l-1.5-5.5L5 19l2.5-5.5L2 12l5.5-1.5L5 5l5.5 2.5L12 2z"/></svg>
+      Unified Intelligence Platform
+    </div>
+    <h1>One workspace.<br><span>Endless productivity.</span></h1>
+    <p>Manage projects, plan tasks, track expenses, monitor budgets, receive reminders, and gain actionable insights—all from one intelligent workspace.</p>
+    <div class="hero-btns">
+      <a href="https://task-flow-zeta-two.vercel.app/login" class="btn btn-primary">Open workspace <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a href="#" class="btn btn-ghost">Explore features</a>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item bg-accent"><span class="stat-value">24</span><span class="stat-label">tasks</span></div>
+      <div class="stat-item"><span class="stat-value">$1.2k</span><span class="stat-label">expense</span></div>
+      <div class="stat-item"><span class="stat-value">$4.8k</span><span class="stat-label">income</span></div>
+      <div class="stat-item bg-accent">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        <span class="stat-value" style="color:var(--success)">12%</span><span class="stat-label">ai insight</span>
+      </div>
+      <div class="stat-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+        <span class="stat-label">today</span>
+      </div>
+      <div class="stat-item">
+        <div class="avatar-stack">
+          <span>A</span><span>M</span><span>K</span>
+        </div>
+        <span class="stat-label">team</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">
+      <h2>Platform</h2>
+      <p>Two powerful tools, one unified experience</p>
+    </div>
+    <div class="platform-grid">
+      <div class="platform-card">
+        <div class="icon-wrap icon-task">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 2H8.6c-.4 0-.8.2-1.1.5-.3.3-.5.7-.5 1.1v16.8c0 .4.2.8.5 1.1.3.3.7.5 1.1.5h6.8c.4 0 .8-.2 1.1-.5.3-.3.5-.7.5-1.1V3.6c0-.4-.2-.8-.5-1.1-.3-.3-.7-.5-1.1-.5z"/><path d="M8 12h8"/><path d="M8 16h6"/><path d="M8 8h8"/></svg>
+        </div>
+        <h3>Task Planner</h3>
+        <p>Organize projects, assign work, track deadlines, collaborate with teams, manage calendars, and stay productive.</p>
+        <div class="feature-tags">
+          <span>My Tasks</span><span>Projects</span><span>Calendar</span><span>Meetings</span>
+          <span>Reminders</span><span>Team</span><span>Time</span><span>Reports</span>
+        </div>
+        <a href="https://task-flow-zeta-two.vercel.app/login" class="open-btn">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
+      <div class="platform-card">
+        <div class="icon-wrap icon-expense">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3>Expense Meter</h3>
+        <p>Monitor income, control expenses, manage budgets, analyze financial trends, and build better financial habits.</p>
+        <div class="feature-tags">
+          <span>Income</span><span>Expenses</span><span>Transactions</span><span>Budget</span>
+          <span>Savings</span><span>Reports</span><span>Analytics</span><span>Export</span>
+        </div>
+        <a href="https://expense-meter-one.vercel.app/" class="open-btn">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">
+      <h2>Dashboard</h2>
+      <p>Everything important in one place</p>
+    </div>
+    <div class="dashboard-grid">
+      <div class="dash-card"><div class="label">Pending</div><div class="value gold">12</div></div>
+      <div class="dash-card"><div class="label">Completed today</div><div class="value green">8</div></div>
+      <div class="dash-card"><div class="label">Overdue</div><div class="value red">3</div></div>
+      <div class="dash-card"><div class="label">Upcoming meetings</div><div class="value">2</div></div>
+      <div class="dash-card"><div class="label">Balance</div><div class="value green">$14,200</div></div>
+      <div class="dash-card"><div class="label">Monthly income</div><div class="value green">$6,400</div></div>
+      <div class="dash-card"><div class="label">Monthly expense</div><div class="value red">$3,100</div></div>
+      <div class="dash-card"><div class="label">Savings</div><div class="value green">$3,300</div></div>
+    </div>
+    <div class="dash-bottom">
+      <div class="dash-panel">
+        <h4>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+          Today
+        </h4>
+        <div class="dash-row"><span>Design review</span><span style="color:var(--text-muted)">2pm</span></div>
+        <div class="dash-row"><span>Expense due: rent</span><span style="color:var(--danger)">due</span></div>
+        <div style="margin-top:16px"><h4>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 4 11 4 11H2s4-4 4-11"/><path d="M9.5 22a2.5 2.5 0 0 0 5 0"/></svg>
+          Notifications
+        </h4></div>
+        <div class="dash-row"><span>New task assigned</span><span style="color:var(--text-muted)">2m ago</span></div>
+        <div class="dash-row"><span>Budget alert: 85%</span><span style="color:var(--warning)">alert</span></div>
+        <div style="margin-top:16px"><h4>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8a4 4 0 0 1 4 4c0 2.2-1 4-4 4s-4-1.8-4-4 1.8-4 4-4z"/><path d="M2 21c.6-3.6 4.2-6 10-6s9.4 2.4 10 6"/></svg>
+          AI Insights
+        </h4></div>
+        <div class="dash-row"><span>Productivity +8%</span><span style="color:var(--success)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        </span></div>
+        <div class="dash-row"><span>Spending trend lowered</span><span style="color:var(--success)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        </span></div>
+      </div>
+      <div class="dash-panel">
+        <h4>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M2 5h20"/><path d="M3 3v2"/><path d="M21 3v2"/></svg>
+          Quick actions
+        </h4>
+        <div class="quick-actions">
+          <button>New Task</button>
+          <button>Add Expense</button>
+          <button>Add Income</button>
+          <button>Create Project</button>
+          <button>Schedule Meeting</button>
+          <button>Set Reminder</button>
+        </div>
+      </div>
+      <div class="dash-panel">
+        <h4>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          Analytics
+        </h4>
+        <div class="analytics-card" style="border:none;padding:0;margin-bottom:12px">
+          <div class="num" style="color:var(--accent)">142</div>
+          <div class="lbl">Tasks completed</div>
+        </div>
+        <div class="dash-row"><span>Projects running</span><span>8</span></div>
+        <div class="dash-row"><span>Monthly savings</span><span style="color:var(--success)">$3.2k</span></div>
+        <div class="dash-row"><span>Productivity score</span><span style="color:var(--accent)">87%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">
+      <h2>Analytics at a Glance</h2>
+      <p>Data-driven insights for smarter decisions</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="dash-panel">
+        <h4>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          Productivity trend
+        </h4>
+        <div class="chart-bar">
+          <div style="height:24px;width:28px;background:var(--accent);opacity:.5"></div>
+          <div style="height:32px;width:28px;background:var(--accent);opacity:.6"></div>
+          <div style="height:20px;width:28px;background:var(--accent);opacity:.4"></div>
+          <div style="height:36px;width:28px;background:var(--accent);opacity:.7"></div>
+          <div style="height:28px;width:28px;background:var(--accent);opacity:.5"></div>
+          <div style="height:44px;width:28px;background:var(--accent)"></div>
+          <div style="height:38px;width:28px;background:var(--accent);opacity:.8"></div>
+        </div>
+      </div>
+      <div class="dash-panel">
+        <h4>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Expense breakdown
+        </h4>
+        <div class="exp-breakdown">
+          <div><span>housing</span><span>$1,400</span></div>
+          <div><span>food</span><span>$600</span></div>
+          <div><span>transport</span><span>$350</span></div>
+          <div><span>utilities</span><span>$200</span></div>
+        </div>
+        <div class="exp-bar" style="margin-top:8px"><div style="width:55%;background:var(--accent)"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px"><span>0%</span><span>100%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg-surface)">
+  <div class="container">
+    <div class="section-title">
+      <h2>Why Naivadya</h2>
+      <p>Everything you need, designed for how you work</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon-wrap">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/></svg>
+        </div>
+        <h4>Unified Workspace</h4><p>All tools in one</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8a4 4 0 0 1 4 4c0 2.2-1 4-4 4s-4-1.8-4-4 1.8-4 4-4z"/><path d="M2 21c.6-3.6 4.2-6 10-6s9.4 2.4 10 6"/></svg>
+        </div>
+        <h4>AI Assistance</h4><p>Smart insights</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h4>Secure Cloud</h4><p>Encrypted sync</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h4>Real-time Collab</h4><p>Team sync</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        </div>
+        <h4>Financial Intel</h4><p>Budget analytics</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon-wrap">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        </div>
+        <h4>Cross-device</h4><p>Anywhere access</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">
+      <h2>Testimonials</h2>
+      <p>Loved by teams worldwide</p>
+    </div>
+    <div class="testimonials">
+      <div class="testimonial-card">
+        <div class="stars">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="text">"Naivadya changed how we track projects and budgets."</div>
+        <div class="author"><div class="avatar">JD</div><div><div class="name">Jane Doe</div><div class="role">CTO, Finly</div></div></div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="text">"Everything in one place — tasks, finance, insights."</div>
+        <div class="author"><div class="avatar">MK</div><div><div class="name">Mark Kim</div><div class="role">Product Lead</div></div></div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="text">"The expense meter keeps my freelance business on track."</div>
+        <div class="author"><div class="avatar">SR</div><div><div class="name">Sarah Ray</div><div class="role">Freelancer</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo"><span class="n">N</span> NAIVADYA</div>
+      <p>unified workspace</p>
+    </div>
+    <div class="footer-col"><h5>About</h5><a href="#">Company</a><a href="#">Blog</a><a href="#">Careers</a></div>
+    <div class="footer-col"><h5>Features</h5><a href="#">Task Planner</a><a href="#">Expense Meter</a><a href="#">AI Insights</a></div>
+    <div class="footer-col"><h5>Docs</h5><a href="#">Getting Started</a><a href="#">API Reference</a><a href="#">Tutorials</a></div>
+    <div class="footer-col"><h5>Support</h5><a href="#">Help Center</a><a href="#">Contact</a><a href="#">Status</a></div>
+  </div>
+  <div class="footer-bottom">
+    <a href="#" style="color:var(--text-muted);text-decoration:none;margin:0 12px">Privacy</a>
+    <a href="#" style="color:var(--text-muted);text-decoration:none;margin:0 12px">Terms</a>
+    <span style="margin:0 12px">© 2026 Naivadya</span>
+  </div>
+</footer>
+
+</body>
+</html>
