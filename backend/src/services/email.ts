@@ -5,20 +5,24 @@ let transporter: nodemailer.Transporter | null = null
 
 function getTransporter() {
   if (transporter) return transporter
-  if (config.smtp.host) {
-    transporter = nodemailer.createTransport({
-      host: config.smtp.host,
-      port: config.smtp.port,
-      secure: config.smtp.secure,
-      auth: { user: config.smtp.user, pass: config.smtp.pass },
-    })
+  if (!config.smtp.host) {
+    console.warn('[TaskFlow Email] SMTP not configured — OTP will only be logged to console')
+    return null
   }
+  transporter = nodemailer.createTransport({
+    host: config.smtp.host,
+    port: config.smtp.port,
+    secure: config.smtp.secure,
+    auth: { user: config.smtp.user, pass: config.smtp.pass },
+  })
   return transporter
 }
 
-export async function sendOTP(email: string, otp: string) {
+export async function sendOTP(email: string, otp: string): Promise<boolean> {
   const t = getTransporter()
-  if (t) {
+  console.log(`[TaskFlow Email] OTP for ${email}: ${otp}`)
+  if (!t) return false
+  try {
     await t.sendMail({
       from: config.smtp.from,
       to: email,
@@ -31,6 +35,10 @@ export async function sendOTP(email: string, otp: string) {
         <p style="color:#999;font-size:12px">If you didn't request this, ignore this email.</p>
       </div>`,
     })
+    console.log(`[TaskFlow Email] Sent to ${email} successfully`)
+    return true
+  } catch (err: any) {
+    console.error(`[TaskFlow Email] Failed to send to ${email}:`, err.message)
+    return false
   }
-  console.log(`[TaskFlow Email] OTP for ${email}: ${otp}`)
 }
