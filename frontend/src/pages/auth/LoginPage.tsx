@@ -24,8 +24,12 @@ export function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await login(email, password)
-    if (useAuthStore.getState().isAuthenticated) navigate('/')
+    try {
+      await login(email, password)
+      navigate('/')
+    } catch (err: any) {
+      toast.error(err.message)
+    }
   }
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -34,9 +38,13 @@ export function LoginPage() {
       toast.error('Password must be at least 6 characters')
       return
     }
-    await register(regName, regEmail, regPassword)
-    setView('verify')
-    toast.success('OTP sent to your email')
+    try {
+      const result = await register(regName, regEmail, regPassword)
+      setView('verify')
+      toast.success(result.emailSent ? 'OTP sent to your email' : 'Account created. Check Render logs for OTP.')
+    } catch (err: any) {
+      toast.error(err.message)
+    }
   }
 
   const handleVerifyOTP = async () => {
@@ -45,16 +53,22 @@ export function LoginPage() {
       toast.error('Enter the complete 6-digit OTP')
       return
     }
-    await verifyOTP(regEmail, code)
-    if (useAuthStore.getState().isAuthenticated) {
+    try {
+      await verifyOTP(regEmail, code)
       toast.success('Email verified! Welcome to TaskFlow')
       navigate('/')
+    } catch (err: any) {
+      toast.error(err.message)
     }
   }
 
   const handleResend = async () => {
-    await resendOTP(regEmail)
-    toast.success('OTP resent')
+    try {
+      await resendOTP(regEmail)
+      toast.success('OTP resent')
+    } catch (err: any) {
+      toast.error(err.message)
+    }
   }
 
   const handleOtpChange = (i: number, val: string) => {
