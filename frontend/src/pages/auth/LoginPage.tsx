@@ -72,8 +72,8 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600/20 via-zinc-950 to-zinc-950 items-center justify-center p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(157,78,221,0.15),transparent_50%)]" />
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600/20 via-[var(--bg-surface)] to-[var(--bg-base)] items-center justify-center p-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(157,78,221,0.12),transparent_50%)]" />
         <div className="relative z-10 max-w-md">
           <div className="w-16 h-16 rounded-2xl bg-purple-600 flex items-center justify-center mb-8">
             <CheckSquare size={32} className="text-white" />
