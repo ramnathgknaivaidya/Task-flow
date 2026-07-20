@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import compression from 'compression'
 import { config } from './config'
+import { connectDB } from './database'
 import routes from './routes'
 import { errorHandler, notFound } from './middleware/errorHandler'
 
@@ -21,8 +22,10 @@ app.use('/api', routes)
 app.use(notFound)
 app.use(errorHandler)
 
-app.listen(config.port, () => {
-  console.log(`[TaskFlow API] Server running on port ${config.port} in ${config.nodeEnv} mode`)
+connectDB().then(() => {
+  app.listen(config.port, () => {
+    console.log(`[TaskFlow API] Server running on port ${config.port} in ${config.nodeEnv} mode`)
+  })
 })
 
 export default app
