@@ -3,7 +3,7 @@ services:
     name: taskflow-api
     env: node
     region: oregon
-    rootDir: Task/backend
+    rootDir: backend
     buildCommand: npm install && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
